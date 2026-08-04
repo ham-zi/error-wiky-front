@@ -7,7 +7,6 @@ import TroubleshootingListPage from "./pages/troubleshooting/TroubleshootingList
 import TroubleshootingDetailPage from "./pages/troubleshooting/TroubleshootingDetailPage";
 import TroubleshootingCreatePage from "./pages/troubleshooting/TroubleshootingCreatePage";
 import TroubleshootingEditPage from "./pages/troubleshooting/TroublesshootingEditPage";
-import OAuth2SuccessPage from "./pages/auth/OAuth2SuccessPage";
 
 function AppLayout() {
   return (
@@ -39,7 +38,6 @@ function AppLayout() {
             path="/troubleshooting/:troubleshootingId"
             element={<TroubleshootingDetailPage />}
           />
-          <Route path="/oauth2/success" element={<OAuth2SuccessPage />} />
         </Routes>
       </main>
 
