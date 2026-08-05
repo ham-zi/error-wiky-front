@@ -1,2 +1,66 @@
-import {useState} from "react";import {useNavigate} from "react-router-dom";import {useAuth} from "../auth/AuthContext";import {AuthCard,Field} from "./LoginPage";
-export default function SignupPage(){const{signup}=useAuth();const nav=useNavigate();const[form,setForm]=useState({loginId:'',name:'',email:'',password:'',confirm:''});const[error,setError]=useState('');async function submit(e){e.preventDefault();if(form.password!==form.confirm){setError('비밀번호 확인이 일치하지 않습니다.');return}try{await signup(form);alert('회원가입이 완료되었습니다.');nav('/auth/login')}catch(err){setError(err.userMessage??'회원가입에 실패했습니다.')}}return <AuthCard title="회원가입"><form onSubmit={submit} className="space-y-4"><Field label="아이디" value={form.loginId} onChange={v=>setForm({...form,loginId:v})}/><Field label="이름" value={form.name} onChange={v=>setForm({...form,name:v})}/><Field label="이메일" type="email" value={form.email} onChange={v=>setForm({...form,email:v})}/><Field label="비밀번호 (8자 이상)" type="password" value={form.password} onChange={v=>setForm({...form,password:v})}/><Field label="비밀번호 확인" type="password" value={form.confirm} onChange={v=>setForm({...form,confirm:v})}/>{error&&<p className="text-sm text-red-600">{error}</p>}<button className="btn-primary w-full">가입하기</button></form></AuthCard>}
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { AuthCard, Field } from "./LoginPage";
+export default function SignupPage() {
+  const { signup } = useAuth();
+  const nav = useNavigate();
+  const [form, setForm] = useState({
+    loginId: "",
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
+  });
+  const [error, setError] = useState("");
+  async function submit(e) {
+    e.preventDefault();
+    if (form.password !== form.confirm) {
+      setError("비밀번호 확인이 일치하지 않습니다.");
+      return;
+    }
+    try {
+      await signup(form);
+      alert("회원가입이 완료되었습니다.");
+      nav("/auth/login");
+    } catch (err) {
+      setError(err.userMessage ?? "회원가입에 실패했습니다.");
+    }
+  }
+  return (
+    <AuthCard title="회원가입">
+      <form onSubmit={submit} className="space-y-4">
+        <Field
+          label="아이디"
+          value={form.loginId}
+          onChange={(v) => setForm({ ...form, loginId: v })}
+        />
+        <Field
+          label="이름"
+          value={form.name}
+          onChange={(v) => setForm({ ...form, name: v })}
+        />
+        <Field
+          label="이메일"
+          type="email"
+          value={form.email}
+          onChange={(v) => setForm({ ...form, email: v })}
+        />
+        <Field
+          label="비밀번호 (8자 이상)"
+          type="password"
+          value={form.password}
+          onChange={(v) => setForm({ ...form, password: v })}
+        />
+        <Field
+          label="비밀번호 확인"
+          type="password"
+          value={form.confirm}
+          onChange={(v) => setForm({ ...form, confirm: v })}
+        />
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button className="btn-primary w-full">가입하기</button>
+      </form>
+    </AuthCard>
+  );
+}
