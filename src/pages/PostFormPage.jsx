@@ -32,6 +32,7 @@ export default function PostFormPage({ edit = false }) {
   const [files, setFiles] = useState([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, isLoading] = useState(false);
   useEffect(() => {
     if (edit)
       api
@@ -47,6 +48,7 @@ export default function PostFormPage({ edit = false }) {
     }
     setBusy(true);
     setMessage("");
+    isLoading(true);
     try {
       const r = unwrap(
         await api.post("/ai/recommend", {
@@ -60,6 +62,7 @@ export default function PostFormPage({ edit = false }) {
     } catch (e) {
       setMessage(e.userMessage ?? "AI 추천에 실패했습니다.");
     } finally {
+      isLoading(false);
       setBusy(false);
     }
   }
@@ -138,7 +141,7 @@ export default function PostFormPage({ edit = false }) {
                 disabled={busy}
                 onClick={recommend}
               >
-                ✨ AI 제목·분류 추천
+                {!loading ? "제목·분류 추천 고민중..." : "✨ AI 제목·분류 추천"}
               </button>
             </div>
             <T

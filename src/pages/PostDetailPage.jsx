@@ -10,6 +10,7 @@ export default function PostDetailPage() {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
+  const [loading, isLoading] = useState(false);
   async function load() {
     try {
       const [p, c] = await Promise.all([
