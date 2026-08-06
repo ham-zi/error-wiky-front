@@ -81,5 +81,5 @@ jobs:
           script: |
             cd /home/ubuntu/app
             # docker-compose.yml 위치로 이동
-            docker compose restart web
-            # web(Nginx) 컨테이너만 재시작하여 변경사항 반영
+            docker compose restart front
+            # front(Nginx) 컨테이너만 재시작하여 변경사항 반영
