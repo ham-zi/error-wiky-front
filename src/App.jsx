@@ -34,6 +34,7 @@ export default function App() {
           <Route index element={<HomePage />} />
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/auth/signup" element={<SignupPage />} />
+          <Route path="/auth/oauth-success" element={<HomePage />} />
           <Route path="/oauth2/success" element={<OAuthSuccessPage />} />
           <Route
             path="/error-wiki"
