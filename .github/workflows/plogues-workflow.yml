@@ -1,0 +1,85 @@
+name: Deploy React App
+# GitHub Actions 워크플로우 이름
+
+on:
+  push:
+    branches: [main]
+    # main 브랜치에 push가 발생하면 실행
+  pull_request:
+    branches: [main]
+    # main 브랜치로 PR이 생성되거나 갱신되면 실행
+
+jobs:
+  build-and-deploy:
+    # 하나의 작업(Job) 이름
+    runs-on: ubuntu-latest
+    # Ubuntu 최신 환경에서 실행
+
+    steps:
+      - uses: actions/checkout@v4
+        # GitHub 저장소의 코드를 Runner로 가져온다.
+
+      - name: Install Node
+        # Node.js 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          # Node.js 22 버전 사용
+          cache: "npm"
+          # npm 캐시를 사용하여 설치 속도 향상
+          cache-dependency-path: package-lock.json
+          # package-lock.json이 저장소 루트에 있으므로 경로 지정
+
+      - name: Install Dependencies
+        # package-lock.json 기준으로 의존성 설치
+        run: npm ci
+
+      - name: Build
+        # React 프로젝트 빌드(dist 폴더 생성)
+        run: npm run build
+
+      - name: Prepare Target Directory
+        # EC2의 기존 dist 폴더를 삭제 후 새로 생성
+        if: github.event_name == 'push'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.USERNAME }}
+          script: |
+            rm -rf /home/ubuntu/app/dist
+            # 기존 React 빌드 파일 삭제
+            mkdir -p /home/ubuntu/app/dist
+            # 새로운 dist 폴더 생성
+
+      - name: Deploy React Project To EC2
+        # 빌드된 React 파일을 EC2로 복사
+        if: github.event_name == 'push'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.USERNAME }}
+          source: "dist/*"
+          # GitHub 저장소 루트 기준 경로
+          # 현재 Repository Root가 React 프로젝트이므로 dist만 지정하면 된다.
+          target: "/home/ubuntu/app/dist/"
+          # EC2에 복사될 위치
+          strip_components: 1
+          # dist 경로를 제거하고 파일만 복사
+          overwrite: true
+          # 동일한 파일이 있으면 덮어쓰기
+
+      - name: Restart Container
+        # React(Nginx) 컨테이너 재시작
+        if: github.event_name == 'push'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.USERNAME }}
+          script: |
+            cd /home/ubuntu/app
+            # docker-compose.yml 위치로 이동
+            docker compose restart web
+            # web(Nginx) 컨테이너만 재시작하여 변경사항 반영
