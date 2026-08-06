@@ -141,7 +141,7 @@ export default function PostFormPage({ edit = false }) {
                 disabled={busy}
                 onClick={recommend}
               >
-                {!loading ? "제목·분류 추천 고민중..." : "✨ AI 제목·분류 추천"}
+                {loading ? "제목·분류 추천 고민중..." : "✨ AI 제목·분류 추천"}
               </button>
             </div>
             <T
